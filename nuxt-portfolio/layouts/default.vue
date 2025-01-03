@@ -16,6 +16,10 @@
 </template>
 
 <script setup>
+const colorMode = useColorMode();
+console.log(colorMode.preference);
+colorMode.preference = "light"; // 직접 설정 가능 (기본은 시스템 설정대로)
+
 useHead({
   titleTemplate: "%s - Yejin Han",
   link: [
@@ -35,5 +39,6 @@ useHead({
 <style>
 body {
   font-family: "Roboto";
+  @apply bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300; /* 시스템 모드에 따라서만 결정 가능 */
 }
 </style>
