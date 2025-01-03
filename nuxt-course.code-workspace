@@ -22,7 +22,7 @@
     "editor.mouseWheelScrollSensitivity": 1,
     "editor.fastScrollSensitivity": 1,
     "editor.smoothScrolling": false,
-    "editor.cursorBlinking": "solid",
+    // "editor.cursorBlinking": "solid",
     "editor.stickyScroll.enabled": true,
     // "editor.fontFamily": "'CaskaydiaMono Nerd Font Mono'",
     "editor.fontLigatures": true,
