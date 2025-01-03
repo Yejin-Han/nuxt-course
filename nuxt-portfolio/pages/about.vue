@@ -7,6 +7,6 @@
 
 <script setup>
 useHead({
-  title: "About Page",
+  title: "About",
 });
 </script>

@@ -4,14 +4,14 @@
 
 <script setup>
 useSeoMeta({
-  title: "Main Page",
+  title: "Main",
   description: "This is the main page",
-  ogTitle: "Main Page",
-  ogDescription: "[og:description]",
+  ogTitle: "Main",
+  ogDescription: "This is the main page",
   ogImage: "[og:image]",
   ogUrl: "[og:url]",
-  twitterTitle: "Main Page",
-  twitterDescription: "[twitter:description]",
+  twitterTitle: "Main",
+  twitterDescription: "This is the main page",
   twitterImage: "[twitter:image]",
   twitterCard: "summary",
 });
