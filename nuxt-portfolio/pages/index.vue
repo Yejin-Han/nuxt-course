@@ -24,7 +24,7 @@ useHead({
     {
       rel: "icon",
       type: "image/png",
-      href: "/public/favicon.ico",
+      href: "/favicon.ico",
     },
   ],
 });
