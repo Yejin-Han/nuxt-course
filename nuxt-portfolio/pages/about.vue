@@ -1,12 +1,5 @@
 <template>
-  <div>This page is about me.</div>
-  <!-- <div>
-    <button @click="enableCustomLayout">Update Layout</button>
-  </div> -->
+  <article class="prose dark:prose-invert prose-h1:text-3xl">
+    <ContentDoc path="/about" />
+  </article>
 </template>
-
-<script setup>
-useHead({
-  title: "About",
-});
-</script>
