@@ -35,18 +35,16 @@ const { data } = await useAsyncData("blog-list", () =>
 );
 
 const posts = computed(() => {
-  console.log(data.value);
   if (!data.value) {
     return [];
   }
+
   const result = [];
   let lastYear = null;
 
   for (const post of data.value) {
     const year = new Date(post.publishedAt).getFullYear();
-    console.log(year);
     const displayYear = year !== lastYear;
-    console.log(`Should display a year ${displayYear}`);
     post.displayYear = displayYear;
     post.year = year;
     result.push(post);
