@@ -41,7 +41,7 @@
     "editor.renderControlCharacters": false,
     "editor.accessibilitySupport": "off",
     "workbench.colorTheme": "Tokyo Night",
-    "workbench.activityBar.location": "hidden",
+    "workbench.activityBar.location": "default",
     "workbench.hover.delay": 500,
     "workbench.sash.hoverDelay": 500,
     "workbench.editor.empty.hint": "hidden",
