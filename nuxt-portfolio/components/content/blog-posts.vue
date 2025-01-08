@@ -43,7 +43,7 @@ const { data } = await useAsyncData("blog-list", () => {
     .sort({ publishedAt: -1 });
 
   if (props.limit) {
-    query.limit(props.limit);
+    query.limit(props.limit); // query 개수 제한
   }
 
   return query.find();
