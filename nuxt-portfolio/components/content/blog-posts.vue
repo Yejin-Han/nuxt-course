@@ -10,11 +10,12 @@
         <li v-for="(post, idx) in posts" :key="idx">
           <NuxtLink
             :to="post._path"
-            class="column hover:bg-gray-100 dark:hover:bg-gray-800"
+            class="column group hover:bg-gray-100 dark:hover:bg-gray-800"
           >
             <div
               :class="{
-                'opacity-0': !post.displayYear, //text-white dark:text-gray-900 강의에선 이걸로 했는데 그냥 아예 안보이게 하는게 깔끔할 것 같아서 수정함
+                'text-white group-hover:text-gray-100 dark:text-gray-900 dark:group-hover:text-gray-800':
+                  !post.displayYear,
                 'text-gray-400 dark:text-gray-500': post.displayYear,
               }"
             >

@@ -19,6 +19,6 @@
 
 <style scoped>
 .link {
-  @apply p-1 hover:bg-gray-100;
+  @apply p-1 hover:bg-gray-100 dark:hover:bg-gray-700;
 }
 </style>

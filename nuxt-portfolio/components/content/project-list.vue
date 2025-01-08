@@ -7,7 +7,7 @@
         <li
           v-for="repository in repos"
           :key="repository.id"
-          class="border border-gray-200 rounded-sm hover:bg-gray-100 font-mono overflow-hidden"
+          class="border border-gray-200 dark:border-gray-700 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-800 font-mono overflow-hidden"
         >
           <a
             :href="repository.html_url"
