@@ -5,7 +5,7 @@
     <div class="text-2xl font-extrabold text-black dark:text-white mb-2">
       <!-- loading = true면, pulse 중인 빈 rounded-box를 보여준다(자리차지) -->
       <USkeleton class="h-8 w-full" v-if="loading" />
-      <div v-else>{{ amount }}</div>
+      <div v-else>{{ currency }}</div>
     </div>
 
     <div>
@@ -39,6 +39,7 @@ const icon = computed(() =>
     ? "i-heroicons-arrow-trending-up"
     : "i-heroicons-arrow-trending-down"
 );
+const { currency } = useCurrency(props.amount);
 const percentageTrend = computed(() => {
   if (props.amount === 0 || props.lastAmount === 0) return "∞";
 
