@@ -66,11 +66,11 @@ const trendOptions = [
 
 const supabase = useSupabaseClient();
 const transactions = ref([]);
-const { data, pending } = await useAsyncData("transactions", async () => {
+const { data, status } = await useAsyncData("transactions", async () => {
   // 서버, 클라이언트 두 번 fetching 되는 것을 막기 위해 useAsyncData 사용
   const { data, error } = await supabase.from("transactions").select();
   if (error) return [];
   return data;
 });
-transactions.value = data;
+transactions.value = data.value;
 </script>
