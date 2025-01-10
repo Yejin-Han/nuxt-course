@@ -5,10 +5,12 @@
     <div class="flex justify-between items-center">
       <div class="flex items-center space-x-1">
         <UIcon name="i-heroicons-arrow-up-right" class="text-green-600" />
-        <div>Salary</div>
+        <div>{{ transaction.description }}</div>
       </div>
       <div>
-        <UBadge color="white">Category</UBadge>
+        <UBadge color="white" v-if="transaction.category">{{
+          transaction.category
+        }}</UBadge>
       </div>
     </div>
     <div class="flex justify-end items-center space-x-2">
@@ -27,7 +29,15 @@
 </template>
 
 <script setup>
-const { currency } = useCurrency(3000);
+const props = defineProps({
+  transaction: Object,
+});
+const icon = computed(() =>
+  props.transaction.type === "Income"
+    ? "i-heroicons-arrow-up-right"
+    : "i-heroicons-arrow-down-left"
+);
+const { currency } = useCurrency(props.transaction.amount);
 const items = [
   [
     {
