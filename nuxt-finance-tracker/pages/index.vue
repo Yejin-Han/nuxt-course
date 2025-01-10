@@ -7,40 +7,59 @@
   </section>
 
   <section
-    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8"
+    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 mb-10"
   >
     <Trend
-      color="green"
-      title="Income"
-      :amount="4000"
-      :last-amount="3000"
-      :loading="false"
+      v-for="(option, idx) in trendOptions"
+      :key="idx"
+      :color="option.color"
+      :title="option.title"
+      :amount="option.amount"
+      :last-amount="option.lastAmount"
+      :loading="option.loading"
     />
-    <Trend
-      color="red"
-      title="Expense"
-      :amount="4000"
-      :last-amount="5000"
-      :loading="false"
-    />
-    <Trend
-      color="green"
-      title="Investments"
-      :amount="4000"
-      :last-amount="3000"
-      :loading="false"
-    />
-    <Trend
-      color="red"
-      title="Saving"
-      :amount="4000"
-      :last-amount="4100"
-      :loading="false"
-    />
+  </section>
+
+  <section>
+    <Transaction />
+    <Transaction />
+    <Transaction />
+    <Transaction />
   </section>
 </template>
 
 <script setup>
 import { transactionViewOptions } from "~/constants";
 const selectedView = ref(transactionViewOptions[1]);
+
+const trendOptions = [
+  {
+    color: "green",
+    title: "Income",
+    amount: 4000,
+    lastAmount: 3000,
+    loading: false,
+  },
+  {
+    color: "red",
+    title: "Expense",
+    amount: 4000,
+    lastAmount: 5000,
+    loading: false,
+  },
+  {
+    color: "green",
+    title: "Investments",
+    amount: 4000,
+    lastAmount: 3000,
+    loading: false,
+  },
+  {
+    color: "red",
+    title: "Saving",
+    amount: 4000,
+    lastAmount: 4100,
+    loading: false,
+  },
+];
 </script>
