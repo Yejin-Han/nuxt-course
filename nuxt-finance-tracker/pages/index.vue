@@ -73,4 +73,24 @@ const { data, status } = await useAsyncData("transactions", async () => {
   return data;
 });
 transactions.value = data.value;
+
+const transactionsGroupedByDate = computed(() => {
+  let grouped = {};
+
+  for (const transaction of transactions.value) {
+    const transactionDate = new Date(transaction.created_at);
+    const offset = transactionDate.getTimezoneOffset() * 60000; // toISOString은 UTC를 기준으로 하므로 한국과 9시간 차이가 나기 때문에 날짜만 사용하더라도 문제가 생길 수 있음. 이를 보정해주기 위한 offset 계산
+    const date = new Date(transactionDate.getTime() - offset)
+      .toISOString()
+      .split("T")[0];
+
+    if (!grouped[date]) {
+      grouped[date] = [];
+    }
+    grouped[date].push(transaction);
+  }
+
+  return grouped;
+});
+console.log(transactionsGroupedByDate.value);
 </script>
