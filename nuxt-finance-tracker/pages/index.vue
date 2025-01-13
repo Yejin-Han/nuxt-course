@@ -20,6 +20,24 @@
     />
   </section>
 
+  <section class="flex justify-between mb-10">
+    <div>
+      <h2 clas="text-2xl font-extrabold">Transactions</h2>
+      <div class="text-gray-500 dark:text-gray-400">
+        You have {{ incomeCount }} incomes and {{ expenseCount }} expenses this
+        period
+      </div>
+    </div>
+    <div>
+      <UButton
+        icon="i-heroicons-plus-circle"
+        color="white"
+        wariant="solid"
+        label="Add"
+      />
+    </div>
+  </section>
+
   <section v-if="!isLoading">
     <div
       v-for="(transactionsOnDay, date) in transactionsGroupedByDate"
@@ -43,55 +61,79 @@
 <script setup>
 import { transactionViewOptions } from "~/constants";
 const selectedView = ref(transactionViewOptions[1]);
+const transactions = ref([]);
 const isLoading = ref(false);
 
-const trendOptions = [
+const income = computed(() =>
+  transactions.value.filter((t) => t.type === "Income")
+);
+const expense = computed(() =>
+  transactions.value.filter((t) => t.type === "Expense")
+);
+
+const incomeCount = computed(() => income.value.length);
+const expenseCount = computed(() => expense.value.length);
+
+const incomeTotal = computed(() =>
+  income.value.reduce((sum, transaction) => sum + transaction.amount, 0)
+);
+const expenseTotal = computed(() =>
+  expense.value.reduce((sum, transaction) => sum + transaction.amount, 0)
+);
+
+const trendOptions = computed(() => [
   {
     color: "green",
     title: "Income",
-    amount: 4000,
-    lastAmount: 3000,
+    amount: incomeTotal.value,
+    lastAmount: 4100000,
     loading: isLoading.value,
   },
   {
     color: "red",
     title: "Expense",
-    amount: 4000,
-    lastAmount: 5000,
+    amount: expenseTotal.value,
+    lastAmount: 3800000,
     loading: isLoading.value,
   },
   {
     color: "green",
     title: "Investments",
-    amount: 4000,
-    lastAmount: 3000,
+    amount: 4000000,
+    lastAmount: 3000000,
     loading: isLoading.value,
   },
   {
     color: "red",
     title: "Saving",
-    amount: 4000,
-    lastAmount: 4100,
+    amount: 4000000,
+    lastAmount: 4100000,
     loading: isLoading.value,
   },
-];
+]);
 
 const supabase = useSupabaseClient();
-const transactions = ref([]);
 
 const fetchTransactions = async () => {
   isLoading.value = true;
 
   try {
-    const { data } = await useAsyncData("transactions", async () => {
+    /* 
+      ** 원래 아래 내용과 같았는데, 'Component is already mounted, please use $fetch instead' 에러가 떠서
+         useAsyncData를 삭제하고 일반 $fetch로 변경 **
+      const { data } = await useAsyncData("transactions", async () => {
       // 서버, 클라이언트 두 번 fetching 되는 것을 막기 위해 useAsyncData 사용
       const { data, error } = await supabase.from("transactions").select();
 
       if (error) return [];
       return data;
-    });
+    }); */
+    const { data, error } = await supabase.from("transactions").select();
 
-    return data.value;
+    if (error) return [];
+    return data;
+
+    // return data.value;
   } finally {
     isLoading.value = false;
   }
