@@ -33,6 +33,7 @@
 const props = defineProps({
   transaction: Object,
 });
+const emit = defineEmits(["deleted"]); // transaction.vue에서 일어난 delete 이벤트의 결과가 index.vue에서 반영되도록 하기 위해
 
 const isIncome = computed(() => props.transaction.type === "Income");
 const icon = computed(() =>
@@ -59,6 +60,8 @@ const deleteTransaction = async () => {
       icon: "i-heroicons-check-circle",
       color: "green",
     });
+
+    emit("deleted", props.transaction.id);
   } catch (err) {
     toast.add({
       title: "Transaction delete failed",

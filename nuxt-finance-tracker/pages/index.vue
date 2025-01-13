@@ -20,7 +20,7 @@
     />
   </section>
 
-  <section>
+  <section v-if="!isLoading">
     <div
       v-for="(transactionsOnDay, date) in transactionsGroupedByDate"
       :key="date"
@@ -31,14 +31,19 @@
         v-for="transaction in transactionsOnDay"
         :key="transaction.id"
         :transaction="transaction"
+        @deleted="refreshTransactions()"
       />
     </div>
+  </section>
+  <section v-else>
+    <USkeleton class="h-8 w-full mb-2" v-for="i in 4" :key="i" />
   </section>
 </template>
 
 <script setup>
 import { transactionViewOptions } from "~/constants";
 const selectedView = ref(transactionViewOptions[1]);
+const isLoading = ref(false);
 
 const trendOptions = [
   {
@@ -46,40 +51,55 @@ const trendOptions = [
     title: "Income",
     amount: 4000,
     lastAmount: 3000,
-    loading: false,
+    loading: isLoading.value,
   },
   {
     color: "red",
     title: "Expense",
     amount: 4000,
     lastAmount: 5000,
-    loading: false,
+    loading: isLoading.value,
   },
   {
     color: "green",
     title: "Investments",
     amount: 4000,
     lastAmount: 3000,
-    loading: false,
+    loading: isLoading.value,
   },
   {
     color: "red",
     title: "Saving",
     amount: 4000,
     lastAmount: 4100,
-    loading: false,
+    loading: isLoading.value,
   },
 ];
 
 const supabase = useSupabaseClient();
 const transactions = ref([]);
-const { data, status } = await useAsyncData("transactions", async () => {
-  // 서버, 클라이언트 두 번 fetching 되는 것을 막기 위해 useAsyncData 사용
-  const { data, error } = await supabase.from("transactions").select();
-  if (error) return [];
-  return data;
-});
-transactions.value = data.value;
+
+const fetchTransactions = async () => {
+  isLoading.value = true;
+
+  try {
+    const { data } = await useAsyncData("transactions", async () => {
+      // 서버, 클라이언트 두 번 fetching 되는 것을 막기 위해 useAsyncData 사용
+      const { data, error } = await supabase.from("transactions").select();
+
+      if (error) return [];
+      return data;
+    });
+
+    return data.value;
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const refreshTransactions = async () =>
+  (transactions.value = await fetchTransactions());
+await refreshTransactions();
 
 const transactionsGroupedByDate = computed(() => {
   let grouped = {};
