@@ -29,17 +29,14 @@
       </div>
     </div>
     <div>
-      <UModal v-model="isOpen">
-        <UCard>
-          <template #header> Add Transition </template>
-          <div>Hello!</div>
-        </UCard>
-      </UModal>
+      <TransactionModal v-model="isOpen" />
+      <!-- :model-value="isOpen" @update:model-value="(value) => isOpen = value" 과 같음 -->
       <UButton
         icon="i-heroicons-plus-circle"
         color="white"
         wariant="solid"
         label="Add"
+        @click="isOpen = true"
       />
     </div>
   </section>
@@ -89,6 +86,7 @@ const expenseTotal = computed(() =>
 );
 
 const trendOptions = computed(() => [
+  //반응성 부여를 위해 computed로 수정함
   {
     color: "green",
     title: "Income",
@@ -128,19 +126,20 @@ const fetchTransactions = async () => {
     /* 
       ** 원래 아래 내용과 같았는데, 'Component is already mounted, please use $fetch instead' 에러가 떠서
          useAsyncData를 삭제하고 일반 $fetch로 변경 **
-      const { data } = await useAsyncData("transactions", async () => {
-      // 서버, 클라이언트 두 번 fetching 되는 것을 막기 위해 useAsyncData 사용
-      const { data, error } = await supabase.from("transactions").select();
 
-      if (error) return [];
-      return data;
-    }); */
+      const { data } = await useAsyncData("transactions", async () => {
+        // 서버, 클라이언트 두 번 fetching 되는 것을 막기 위해 useAsyncData 사용
+        const { data, error } = await supabase.from("transactions").select();
+
+        if (error) return [];
+        return data;
+      });
+      return data.value;
+    */
     const { data, error } = await supabase.from("transactions").select();
 
     if (error) return [];
     return data;
-
-    // return data.value;
   } finally {
     isLoading.value = false;
   }
