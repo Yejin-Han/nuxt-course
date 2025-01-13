@@ -29,6 +29,12 @@
       </div>
     </div>
     <div>
+      <UModal v-model="isOpen">
+        <UCard>
+          <template #header> Add Transition </template>
+          <div>Hello!</div>
+        </UCard>
+      </UModal>
       <UButton
         icon="i-heroicons-plus-circle"
         color="white"
@@ -63,6 +69,7 @@ import { transactionViewOptions } from "~/constants";
 const selectedView = ref(transactionViewOptions[1]);
 const transactions = ref([]);
 const isLoading = ref(false);
+const isOpen = ref(false);
 
 const income = computed(() =>
   transactions.value.filter((t) => t.type === "Income")
