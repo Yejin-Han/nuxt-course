@@ -74,15 +74,29 @@ const income = computed(() =>
 const expense = computed(() =>
   transactions.value.filter((t) => t.type === "Expense")
 );
+const investment = computed(() =>
+  transactions.value.filter((t) => t.type === "Investment")
+);
+const saving = computed(() =>
+  transactions.value.filter((t) => t.type === "Saving")
+);
 
 const incomeCount = computed(() => income.value.length);
 const expenseCount = computed(() => expense.value.length);
+const investmentCount = computed(() => investment.value.length);
+const savingCount = computed(() => saving.value.length);
 
 const incomeTotal = computed(() =>
   income.value.reduce((sum, transaction) => sum + transaction.amount, 0)
 );
 const expenseTotal = computed(() =>
   expense.value.reduce((sum, transaction) => sum + transaction.amount, 0)
+);
+const investmentTotal = computed(() =>
+  investment.value.reduce((sum, transaction) => sum + transaction.amount, 0)
+);
+const savingTotal = computed(() =>
+  saving.value.reduce((sum, transaction) => sum + transaction.amount, 0)
 );
 
 const trendOptions = computed(() => [
@@ -104,14 +118,14 @@ const trendOptions = computed(() => [
   {
     color: "green",
     title: "Investments",
-    amount: 4000000,
+    amount: investmentTotal.value,
     lastAmount: 3000000,
     loading: isLoading.value,
   },
   {
     color: "red",
     title: "Saving",
-    amount: 4000000,
+    amount: savingTotal.value,
     lastAmount: 4100000,
     loading: isLoading.value,
   },
