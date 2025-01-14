@@ -3,7 +3,7 @@
     <UCard>
       <template #header>Add Transition</template>
 
-      <UForm :state="state">
+      <UForm :state="state" :schema="schema" ref="form" @submit="save">
         <UFormGroup
           label="Transaction Type"
           :required="true"
@@ -52,6 +52,7 @@
           :required="true"
           name="category"
           class="mb-4"
+          v-if="state.type === 'Expense'"
         >
           <USelect
             placeholder="Category"
@@ -59,20 +60,58 @@
             v-model="state.category"
           />
         </UFormGroup>
-      </UForm>
 
-      <UButton type="submit" color="black" variant="solid" label="Save" />
+        <UButton type="submit" color="black" variant="solid" label="Save" />
+      </UForm>
     </UCard>
   </UModal>
 </template>
 
 <script setup>
 import { categories, types } from "~/constants";
+import { z } from "zod";
 
 const props = defineProps({
   modelValue: Boolean,
 });
 const emit = defineEmits(["update:modelValue"]); // 부모에게 modelValue의 상태를 바꾸라고 요청(값 업데이트 하기 위해)
+
+const defaultSchema = z.object({
+  created_at: z.string(),
+  description: z.string().optional(),
+  amount: z.number().positive("Amount needs to be more than 0"),
+});
+
+const incomeSchema = z.object({
+  type: z.literal("Income"), // z.literal은 말 그대로 괄호 안의 값 이외의 값은 일절 허용하지 않는 것. 즉, 고정값
+});
+const expenseSchema = z.object({
+  type: z.literal("Expense"),
+  category: z.enum(categories), // z.enum은 마치 select처럼 사용 가능한 값의 열거
+});
+const investSchema = z.object({
+  type: z.literal("Investment"),
+});
+const savingSchema = z.object({
+  type: z.literal("Saving"),
+});
+
+const schema = z.intersection(
+  z.discriminatedUnion("type", [
+    // z.discriminatedUnion은 key 값을 공유하는 옵션들 중 하나만 선택해서 테스트함
+    incomeSchema,
+    expenseSchema,
+    investSchema,
+    savingSchema,
+  ]),
+  defaultSchema
+);
+
+const form = ref();
+
+const save = async () => {
+  form.value.validate();
+};
 
 const state = reactive({
   type: undefined,
