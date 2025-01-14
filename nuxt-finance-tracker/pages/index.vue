@@ -29,7 +29,7 @@
       </div>
     </div>
     <div>
-      <TransactionModal v-model="isOpen" />
+      <TransactionModal v-model="isOpen" @saved="refreshTransactions()" />
       <!-- :model-value="isOpen" @update:model-value="(value) => isOpen = value" 과 같음 -->
       <UButton
         icon="i-heroicons-plus-circle"
