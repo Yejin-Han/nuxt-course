@@ -83,8 +83,8 @@ const saving = computed(() =>
 
 const incomeCount = computed(() => income.value.length);
 const expenseCount = computed(() => expense.value.length);
-const investmentCount = computed(() => investment.value.length);
-const savingCount = computed(() => saving.value.length);
+// const investmentCount = computed(() => investment.value.length);
+// const savingCount = computed(() => saving.value.length);
 
 const incomeTotal = computed(() =>
   income.value.reduce((sum, transaction) => sum + transaction.amount, 0)
@@ -137,7 +137,7 @@ const fetchTransactions = async () => {
   isLoading.value = true;
 
   try {
-    /* 
+    /*
       ** 원래 아래 내용과 같았는데, 'Component is already mounted, please use $fetch instead' 에러가 떠서
          useAsyncData를 삭제하고 일반 $fetch로 변경 **
 
@@ -151,6 +151,7 @@ const fetchTransactions = async () => {
       return data.value;
     */
     const { data, error } = await supabase.from("transactions").select();
+    // .order("created_at", { ascending: false }); // 날짜 기준 내림차순 정렬 백엔드 방법
 
     if (error) return [];
     return data;
@@ -179,6 +180,16 @@ const transactionsGroupedByDate = computed(() => {
     grouped[date].push(transaction);
   }
 
-  return grouped;
+  // return grouped;
+
+  // 날짜 기준 내림차순 정렬 프론트엔드 방법
+  const sortedKeys = Object.keys(grouped).sort().reverse();
+  const sortedGrouped = {};
+
+  for (const key of sortedKeys) {
+    sortedGrouped[key] = grouped[key];
+  }
+
+  return sortedGrouped;
 });
 </script>
