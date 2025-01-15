@@ -2,6 +2,7 @@ export const useFetchTransactions = (period) => {
   const supabase = useSupabaseClient();
   const transactions = ref([]);
   const pending = ref(false);
+  const { toUTC } = useTimezoneAdjust();
 
   const income = computed(() =>
     transactions.value.filter((t) => t.type === "Income")
@@ -51,11 +52,15 @@ export const useFetchTransactions = (period) => {
         });
         return data.value;
       */
+
+      const fromUTC = toUTC(period.value.from);
+      const toUTCDate = toUTC(period.value.to);
+
       const { data, error } = await supabase
         .from("transactions")
         .select()
-        .gte("created_at", period.value.from.toISOString())
-        .lte("created_at", period.value.to.toISOString())
+        .gte("created_at", fromUTC)
+        .lte("created_at", toUTCDate)
         .order("created_at", { ascending: false }); // 날짜 기준 내림차순 정렬 백엔드 방법
 
       if (error) return [];
@@ -74,10 +79,7 @@ export const useFetchTransactions = (period) => {
 
     for (const transaction of transactions.value) {
       const transactionDate = new Date(transaction.created_at);
-      const offset = transactionDate.getTimezoneOffset() * 60000; // toISOString은 UTC를 기준으로 하므로 한국과 9시간 차이가 나기 때문에 날짜만 사용하더라도 문제가 생길 수 있음. 이를 보정해주기 위한 offset 계산
-      const date = new Date(transactionDate.getTime() - offset)
-        .toISOString()
-        .split("T")[0];
+      const date = toUTC(transactionDate).split("T")[0];
 
       if (!grouped[date]) {
         grouped[date] = [];
