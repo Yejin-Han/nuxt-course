@@ -40,6 +40,10 @@ const icon = computed(() =>
     : "i-heroicons-arrow-trending-down"
 );
 const { currency } = useCurrency(toRef(props, "amount")); // toRef로 감싸준 이유는, index.vue에서 amount는 반응성을 잃은 일반 값 상태로 전달되므로, useCurrency.js에서 isRef(amount)를 검사해보면 false가 나오므로 amount.value값이 아닌 amount 값을 사용하게 되니, 초기 값 포맷 이후에는 다시 계산되지 않을 수 밖에 없음.
+/* 
+const { amount } = toRefs(props);
+const { currency } = useCurrency(amount);로 해도 동일함!
+*/
 const percentageTrend = computed(() => {
   if (props.amount === 0 || props.lastAmount === 0) return "∞";
 

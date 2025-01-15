@@ -79,6 +79,7 @@ const {
 } = useFetchTransactions(curr);
 
 const {
+  refresh: refreshPrev,
   transactions: {
     incomeTotal: prevIncomeTotal,
     expenseTotal: prevExpenseTotal,
@@ -86,6 +87,8 @@ const {
     savingTotal: prevSavingTotal,
   },
 } = useFetchTransactions(prev);
+
+await Promise.all([refresh(), refreshPrev()]);
 
 const trendOptions = computed(() => [
   //반응성 부여를 위해 computed로 수정함
