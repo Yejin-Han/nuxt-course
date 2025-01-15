@@ -61,7 +61,7 @@
 import { transactionViewOptions } from "~/constants";
 const selectedView = ref(transactionViewOptions[1]);
 const isOpen = ref(false);
-const dates = useSelectedTimePeriod(selectedView);
+const { curr, prev } = useSelectedTimePeriod(selectedView);
 
 const {
   // *계층적 구조 분해
@@ -76,7 +76,16 @@ const {
     savingTotal,
     grouped: { byDate },
   },
-} = useFetchTransactions();
+} = useFetchTransactions(curr);
+
+const {
+  transactions: {
+    incomeTotal: prevIncomeTotal,
+    expenseTotal: prevExpenseTotal,
+    investmentTotal: prevInvestmentTotal,
+    savingTotal: prevSavingTotal,
+  },
+} = useFetchTransactions(prev);
 
 const trendOptions = computed(() => [
   //반응성 부여를 위해 computed로 수정함
@@ -84,31 +93,29 @@ const trendOptions = computed(() => [
     color: "green",
     title: "Income",
     amount: incomeTotal.value,
-    lastAmount: 4100000,
+    lastAmount: prevIncomeTotal.value,
     loading: pending.value,
   },
   {
     color: "red",
     title: "Expense",
     amount: expenseTotal.value,
-    lastAmount: 3800000,
+    lastAmount: prevExpenseTotal.value,
     loading: pending.value,
   },
   {
     color: "green",
     title: "Investments",
     amount: investmentTotal.value,
-    lastAmount: 3000000,
+    lastAmount: prevInvestmentTotal.value,
     loading: pending.value,
   },
   {
     color: "red",
     title: "Saving",
     amount: savingTotal.value,
-    lastAmount: 4100000,
+    lastAmount: prevSavingTotal.value,
     loading: pending.value,
   },
 ]);
-
-await refresh();
 </script>
