@@ -157,7 +157,8 @@ const initialState = {
   category: undefined,
 };
 
-const state = reactive({
+const state = ref({
+  // reactive썼었는데, reactive는 Proxy 객체로 감싸기 때문에 Object.assign이 제대로 작동하지 않음. reactive를 사용한다면 속성을 개별적으로 업데이트 해야 함
   ...initialState,
 });
 const resetForm = () => {

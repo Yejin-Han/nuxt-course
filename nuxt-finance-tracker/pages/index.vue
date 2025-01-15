@@ -29,7 +29,7 @@
       </div>
     </div>
     <div>
-      <TransactionModal v-model="isOpen" @saved="refreshTransactions()" />
+      <TransactionModal v-model="isOpen" @saved="refresh()" />
       <!-- :model-value="isOpen" @update:model-value="(value) => isOpen = value" 과 같음 -->
       <UButton
         icon="i-heroicons-plus-circle"
@@ -41,18 +41,14 @@
     </div>
   </section>
 
-  <section v-if="!isLoading">
-    <div
-      v-for="(transactionsOnDay, date) in transactionsGroupedByDate"
-      :key="date"
-      class="mb-10"
-    >
+  <section v-if="!pending">
+    <div v-for="(transactionsOnDay, date) in byDate" :key="date" class="mb-10">
       <DailyTransactionSummary :date="date" :transactions="transactionsOnDay" />
       <Transaction
         v-for="transaction in transactionsOnDay"
         :key="transaction.id"
         :transaction="transaction"
-        @deleted="refreshTransactions()"
+        @deleted="refresh()"
       />
     </div>
   </section>
@@ -64,40 +60,22 @@
 <script setup>
 import { transactionViewOptions } from "~/constants";
 const selectedView = ref(transactionViewOptions[1]);
-const transactions = ref([]);
-const isLoading = ref(false);
 const isOpen = ref(false);
 
-const income = computed(() =>
-  transactions.value.filter((t) => t.type === "Income")
-);
-const expense = computed(() =>
-  transactions.value.filter((t) => t.type === "Expense")
-);
-const investment = computed(() =>
-  transactions.value.filter((t) => t.type === "Investment")
-);
-const saving = computed(() =>
-  transactions.value.filter((t) => t.type === "Saving")
-);
-
-const incomeCount = computed(() => income.value.length);
-const expenseCount = computed(() => expense.value.length);
-// const investmentCount = computed(() => investment.value.length);
-// const savingCount = computed(() => saving.value.length);
-
-const incomeTotal = computed(() =>
-  income.value.reduce((sum, transaction) => sum + transaction.amount, 0)
-);
-const expenseTotal = computed(() =>
-  expense.value.reduce((sum, transaction) => sum + transaction.amount, 0)
-);
-const investmentTotal = computed(() =>
-  investment.value.reduce((sum, transaction) => sum + transaction.amount, 0)
-);
-const savingTotal = computed(() =>
-  saving.value.reduce((sum, transaction) => sum + transaction.amount, 0)
-);
+const {
+  // *계층적 구조 분해
+  pending,
+  refresh,
+  transactions: {
+    incomeCount,
+    expenseCount,
+    incomeTotal,
+    expenseTotal,
+    investmentTotal,
+    savingTotal,
+    grouped: { byDate },
+  },
+} = useFetchTransactions();
 
 const trendOptions = computed(() => [
   //반응성 부여를 위해 computed로 수정함
@@ -106,90 +84,30 @@ const trendOptions = computed(() => [
     title: "Income",
     amount: incomeTotal.value,
     lastAmount: 4100000,
-    loading: isLoading.value,
+    loading: pending.value,
   },
   {
     color: "red",
     title: "Expense",
     amount: expenseTotal.value,
     lastAmount: 3800000,
-    loading: isLoading.value,
+    loading: pending.value,
   },
   {
     color: "green",
     title: "Investments",
     amount: investmentTotal.value,
     lastAmount: 3000000,
-    loading: isLoading.value,
+    loading: pending.value,
   },
   {
     color: "red",
     title: "Saving",
     amount: savingTotal.value,
     lastAmount: 4100000,
-    loading: isLoading.value,
+    loading: pending.value,
   },
 ]);
 
-const supabase = useSupabaseClient();
-
-const fetchTransactions = async () => {
-  isLoading.value = true;
-
-  try {
-    /*
-      ** 원래 아래 내용과 같았는데, 'Component is already mounted, please use $fetch instead' 에러가 떠서
-         useAsyncData를 삭제하고 일반 $fetch로 변경 **
-
-      const { data } = await useAsyncData("transactions", async () => {
-        // 서버, 클라이언트 두 번 fetching 되는 것을 막기 위해 useAsyncData 사용
-        const { data, error } = await supabase.from("transactions").select();
-
-        if (error) return [];
-        return data;
-      });
-      return data.value;
-    */
-    const { data, error } = await supabase.from("transactions").select();
-    // .order("created_at", { ascending: false }); // 날짜 기준 내림차순 정렬 백엔드 방법
-
-    if (error) return [];
-    return data;
-  } finally {
-    isLoading.value = false;
-  }
-};
-
-const refreshTransactions = async () =>
-  (transactions.value = await fetchTransactions());
-await refreshTransactions();
-
-const transactionsGroupedByDate = computed(() => {
-  let grouped = {};
-
-  for (const transaction of transactions.value) {
-    const transactionDate = new Date(transaction.created_at);
-    const offset = transactionDate.getTimezoneOffset() * 60000; // toISOString은 UTC를 기준으로 하므로 한국과 9시간 차이가 나기 때문에 날짜만 사용하더라도 문제가 생길 수 있음. 이를 보정해주기 위한 offset 계산
-    const date = new Date(transactionDate.getTime() - offset)
-      .toISOString()
-      .split("T")[0];
-
-    if (!grouped[date]) {
-      grouped[date] = [];
-    }
-    grouped[date].push(transaction);
-  }
-
-  // return grouped;
-
-  // 날짜 기준 내림차순 정렬 프론트엔드 방법
-  const sortedKeys = Object.keys(grouped).sort().reverse();
-  const sortedGrouped = {};
-
-  for (const key of sortedKeys) {
-    sortedGrouped[key] = grouped[key];
-  }
-
-  return sortedGrouped;
-});
+await refresh();
 </script>
