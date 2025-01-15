@@ -61,6 +61,7 @@
 import { transactionViewOptions } from "~/constants";
 const selectedView = ref(transactionViewOptions[1]);
 const isOpen = ref(false);
+const dates = useSelectedTimePeriod(selectedView);
 
 const {
   // *계층적 구조 분해
