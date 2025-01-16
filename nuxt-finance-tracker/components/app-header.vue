@@ -24,6 +24,7 @@
 
         <template #item="{ item }">
           <span class="truncate">{{ item.label }}</span>
+          <!-- label 속성 없이 user.email을 바로 사용하라는데.. (이메일 불러오는게 좀 늦다고) 나는 문제가 읎다! -->
           <UIcon
             :name="item.icon"
             class="flex-shrink-0 h-4 w-4 text-gray-400 dark:text-gray-500 ms-auto"
