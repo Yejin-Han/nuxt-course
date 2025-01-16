@@ -2,7 +2,7 @@
   <UCard v-if="!success">
     <template #header> Sign-in to Finance Tracker </template>
 
-    <form action="#">
+    <form @submit.prevent="handleLogin">
       <!-- *UForm은 zod schema based validation을 할 때만 쓰면 된다고 한다. -->
       <UFormGroup
         label="Email"
@@ -11,14 +11,20 @@
         :required="true"
         help="You will receive an email with the confirmation link"
       >
-        <UInput type="email" placeholder="xxx@email.com" required />
+        <UInput
+          type="email"
+          placeholder="xxx@email.com"
+          required
+          v-model="email"
+        />
       </UFormGroup>
 
       <UButton
         type="submit"
         variant="solid"
         color="black"
-        @click="success = true"
+        :loading="pending"
+        :disabled="pending"
         >Sign In</UButton
       >
     </form>
@@ -28,7 +34,7 @@
 
     <div class="text-center">
       <p class="mb-4">
-        We have sent an email to <strong>xxx@email.com</strong> with a link to
+        We have sent an email to <strong>{{ email }}</strong> with a link to
         sign-in.
       </p>
       <p><strong>Important:</strong> The link will expire in 5 minutes.</p>
@@ -38,4 +44,34 @@
 
 <script setup>
 const success = ref(false);
+const email = ref("");
+const pending = ref(false);
+const toast = useToast();
+const supabase = useSupabaseClient();
+
+const handleLogin = async () => {
+  pending.value = true;
+
+  try {
+    const { error } = await supabase.auth.signInWithOtp({
+      email: email.value,
+      options: {
+        emailRedirectTo: "http://localhost:3000",
+      },
+    });
+
+    if (error) {
+      toast.add({
+        title: "Error authenticating",
+        icon: "i-heroicons-exclamation-circle",
+        description: error.message,
+        color: "red",
+      });
+    } else {
+      success.value = true;
+    }
+  } finally {
+    pending.value = false;
+  }
+};
 </script>
