@@ -6,10 +6,7 @@
         class="w-full"
         help="This would be blank by default"
       >
-        <UAvatar
-          src="https://avatars.githubusercontent.com/u/739984?v=4"
-          size="3xl"
-        />
+        <UAvatar :src="url" size="3xl" />
       </UFormGroup>
     </div>
     <div class="mb-4">
@@ -39,6 +36,7 @@
 const supabase = useSupabaseClient();
 const user = useSupabaseUser();
 const { toastSuccess, toastError } = useAppToast();
+const { url } = useAvatarUrl();
 
 const uploading = ref(false);
 const fileInput = ref(); // Input ref="fileInput" 속성의 레퍼런스
