@@ -53,12 +53,19 @@ const saveAvatar = async () => {
     return;
   }
 
-  console.log(file);
+  const fileExt = file.name.split(".").pop();
+  const fileName = `${Math.random()}.${fileExt}`;
 
   try {
     uploading.value = true;
+
     // 1. Grab the current avatar URL
+    const currAvatarUrl = user.value.user_metadata?.avatar_url;
     // 2. Upload the image to avatars bucket
+    const { error } = await supabase.storage
+      .from("avatars")
+      .upload(fileName, file);
+    if (error) throw error;
     // 3. Update the user metadata with the avatar URL
     // 4. (OPTIONALLY) Remove the old avatar file
     // 5. Reset the file input
