@@ -6,7 +6,20 @@
     <div class="flex items-center space-x-4">
       <UDropdown
         :items="items"
-        :ui="{ item: { disabled: 'cursor-text select-text' }, width: 'w-64' }"
+        :ui="{
+          item: { disabled: 'cursor-text select-text' },
+          width: 'w-64',
+          /* transition: { // slidedown/up 되는 것처럼 config 수정해봄(근데 이상함)
+            enterActiveClass:
+              'transition-all duration-300 ease-out overflow-hidden',
+            enterFromClass: 'max-h-0 opacity-0 transform scale-100',
+            enterToClass: 'max-h-[150px] opacity-100',
+            leaveActiveClass:
+              'transition-all duration-200 ease-in overflow-hidden',
+            leaveFromClass: 'max-h-[150px] opacity-100',
+            leaveToClass: 'max-h-0 opacity-0 transform scale-100',
+          }, */
+        }"
         v-if="user"
       >
         <UAvatar
