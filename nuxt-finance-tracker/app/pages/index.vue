@@ -59,7 +59,7 @@
 </template>
 
 <script setup>
-import { transactionViewOptions } from "~/constants";
+import { transactionViewOptions } from "~/app/constants";
 
 const user = useSupabaseUser();
 
