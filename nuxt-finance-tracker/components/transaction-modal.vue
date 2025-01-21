@@ -1,7 +1,7 @@
 <template>
   <UModal v-model="isOpen">
     <UCard>
-      <template #header>Add Transition</template>
+      <template #header>{{ isEditing ? "Edit" : "Add" }} Transition</template>
 
       <UForm :state="state" :schema="schema" ref="form" @submit="save">
         <UFormGroup
@@ -14,6 +14,7 @@
             placeholder="Select the transaction type"
             :options="types"
             v-model="state.type"
+            :disabled="isEditing"
           />
         </UFormGroup>
         <UFormGroup label="Amount" :required="true" name="amount" class="mb-4">
@@ -79,7 +80,12 @@ import { z } from "zod";
 
 const props = defineProps({
   modelValue: Boolean,
+  transaction: {
+    type: Object,
+    required: false,
+  },
 });
+const isEditing = computed(() => !!props.transaction); // !!(double negative operator): false, 0, null, undefined에 대해서만 false 반환 => transaction 값이 있었으면 true, 없었으면 false
 const emit = defineEmits(["update:modelValue", "saved"]); // update:modelValue => 부모에게 modelValue의 상태를 바꾸라고 요청(값 업데이트 하기 위해)
 
 const defaultSchema = z.object({
@@ -125,7 +131,7 @@ const save = async () => {
   try {
     const { error } = await supabase
       .from("transactions")
-      .upsert({ ...state.value });
+      .upsert({ ...state.value, id: props.transaction?.id });
 
     if (!error) {
       toastSuccess({
@@ -146,13 +152,21 @@ const save = async () => {
   }
 };
 
-const initialState = {
-  type: undefined,
-  amount: 0,
-  created_at: undefined,
-  description: undefined,
-  category: undefined,
-};
+const initialState = isEditing.value
+  ? {
+      type: props.transaction.type,
+      amount: props.transaction.amount,
+      created_at: props.transaction.created_at.split("T")[0],
+      description: props.transaction.description,
+      category: props.transaction.category,
+    }
+  : {
+      type: undefined,
+      amount: 0,
+      created_at: undefined,
+      description: undefined,
+      category: undefined,
+    };
 
 const state = ref({
   // reactive썼었는데, reactive는 Proxy 객체로 감싸기 때문에 Object.assign이 제대로 작동하지 않음. reactive를 사용한다면 속성을 개별적으로 업데이트 해야 함

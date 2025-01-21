@@ -80,10 +80,12 @@ const saveAvatar = async () => {
       const { error } = await supabase.storage
         .from("avatars")
         .remove([currAvatarUrl]);
+
       if (error) throw error;
     }
 
     // 5. Reset the file input
+    fileInput.value.input.value = null;
 
     toastSuccess({
       title: "Avatar uploaded",

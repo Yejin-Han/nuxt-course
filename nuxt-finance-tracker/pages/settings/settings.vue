@@ -9,15 +9,15 @@
         v-model="state.transactionView"
         :options="transactionViewOptions"
       />
-      <UButton
-        type="submit"
-        color="black"
-        variant="solid"
-        label="Save"
-        :loading="pending"
-        :disabled="pending"
-      />
     </UFormGroup>
+    <UButton
+      type="submit"
+      color="black"
+      variant="solid"
+      label="Save"
+      :loading="pending"
+      :disabled="pending"
+    />
   </UForm>
 </template>
 
