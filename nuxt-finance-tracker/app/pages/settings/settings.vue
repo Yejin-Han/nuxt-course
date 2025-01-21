@@ -23,7 +23,7 @@
 
 <script setup>
 import { z } from "zod";
-import { transactionViewOptions } from "~/app/constants";
+import { transactionViewOptions } from "~/constants";
 
 const supabase = useSupabaseClient();
 const user = useSupabaseUser();

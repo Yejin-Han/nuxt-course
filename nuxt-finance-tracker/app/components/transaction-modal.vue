@@ -75,7 +75,7 @@
 </template>
 
 <script setup>
-import { categories, types } from "~/app/constants";
+import { categories, types } from "~/constants";
 import { z } from "zod";
 
 const props = defineProps({
