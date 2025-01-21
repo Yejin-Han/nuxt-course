@@ -23,6 +23,11 @@
             trailing-icon="i-heroicons-ellipsis-horizontal"
             :loading="isLoading"
           />
+          <TransactionModal
+            v-model="isOpen"
+            :transaction="transaction"
+            @saved="emit('edited')"
+          />
         </UDropdown>
       </div>
     </div>
@@ -33,7 +38,7 @@
 const props = defineProps({
   transaction: Object,
 });
-const emit = defineEmits(["deleted"]); // transaction.vue에서 일어난 delete 이벤트의 결과가 index.vue에서 반영되도록 하기 위해
+const emit = defineEmits(["deleted", "edited"]); // transaction.vue에서 delete, edit 이벤트가 일어난다는 사실을 index.vue로 전달하고, 해당 이벤트 자리에 index.vue에서 생성된 함수를 반영하기 위해. 즉, 자식 컴포넌트에서 지정한 위치에서 이벤트를 방출하면 부모 컴포넌트에서 그 자리에 함수를 전달해서 실행하도록 한다고 보면 됨.
 
 const isIncome = computed(() => props.transaction.type === "Income");
 const icon = computed(() =>
@@ -48,6 +53,8 @@ const { currency } = useCurrency(props.transaction.amount);
 const isLoading = ref(false);
 const { toastSuccess, toastError } = useAppToast();
 const supabase = useSupabaseClient();
+
+const isOpen = ref(false);
 
 const deleteTransaction = async () => {
   isLoading.value = true;
@@ -74,9 +81,7 @@ const items = [
     {
       label: "Edit",
       icon: "i-heroicons-pencil-square-20-solid",
-      click: () => {
-        console.log("Edit");
-      },
+      click: () => (isOpen.value = true),
     },
     {
       label: "Delete",

@@ -80,6 +80,7 @@ export const useFetchTransactions = (period) => {
     for (const transaction of transactions.value) {
       const transactionDate = new Date(transaction.created_at);
       const date = toUTC(transactionDate).split("T")[0];
+      //* 마지막 강의로 오니까 그냥 const date = transaction.created_at.split('T')[0] 으로 간단하게 끝내심 (근데 날짜를 복잡하게 다루려면 위대로 하는게 맞음)
 
       if (!grouped[date]) {
         grouped[date] = [];

@@ -1,7 +1,7 @@
 <template>
   <UModal v-model="isOpen">
     <UCard>
-      <template #header>{{ isEditing ? "Edit" : "Add" }} Transition</template>
+      <template #header>{{ isEditing ? "Edit" : "Add" }} Transaction</template>
 
       <UForm :state="state" :schema="schema" ref="form" @submit="save">
         <UFormGroup
